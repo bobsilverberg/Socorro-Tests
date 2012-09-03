@@ -23,20 +23,20 @@ class CrashStatsTopCrashers(CrashStatsBasePage):
     _current_days_filter_locator = (By.CSS_SELECTOR, 'ul.tc-duration-days li a.selected')
     _current_os_filter_locator = (By.CSS_SELECTOR, 'ul.tc-per-platform li a.selected')
 
+    def __getattr__(self, name):
+        locator = "_%s_locator" % name
+        try:
+            value = self.selenium.find_element(*getattr(self, locator)).text
+        except:
+            raise AttributeError(name)
+        return value
+
     @property
     def _signature_table_row_locator(self):
         if self.current_os_filter == "All":
             return (By.CSS_SELECTOR, '#signatureList tbody tr')
         else:
             return (By.CSS_SELECTOR, '#peros-tbl tbody tr')
-
-    @property
-    def page_heading_product(self):
-        return self.selenium.find_element(*self._page_heading_product_locator).text
-
-    @property
-    def page_heading_version(self):
-        return self.selenium.find_element(*self._page_heading_version_locator).text
 
     @property
     def results_count(self):
@@ -74,21 +74,9 @@ class CrashStatsTopCrashers(CrashStatsBasePage):
                 return CrashStatsTopCrashers(self.testsetup)
 
     @property
-    def current_filter_type(self):
-        return self.selenium.find_element(*self._current_filter_type_locator).text
-
-    @property
-    def current_days_filter(self):
-        return self.selenium.find_element(*self._current_days_filter_locator).text
-
-    @property
-    def current_os_filter(self):
-        return self.selenium.find_element(*self._current_os_filter_locator).text
-
-    @property
     def signature_items(self):
         return [self.SignatureItem(self.testsetup, i)
-                    for i in self.selenium.find_elements(*self._signature_table_row_locator)]
+                for i in self.selenium.find_elements(*self._signature_table_row_locator)]
 
     def click_first_signature(self):
         return self.signature_items[0].click()
