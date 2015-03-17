@@ -92,16 +92,16 @@ class FirefoxVersion(Version):
         # The postreleases are the same, so compare the "prereleases".
 
         # case 1: neither has prerelease; they're equal
-        # case 2: self has prerelease, other doesn't; other is greater
-        # case 3: self doesn't have prerelease, other does: self is greater
+        # case 2: self has prerelease, other doesn't; self is greater
+        # case 3: self doesn't have prerelease, other does: other is greater
         # case 4: both have prerelease: must compare them!
 
         if not self.prerelease and not other.prerelease:
             return 0
         elif self.prerelease and not other.prerelease:
-            return -1
-        elif not self.prerelease and other.prerelease:
             return 1
+        elif not self.prerelease and other.prerelease:
+            return -1
         else:
             prereleases = ('a', '(beta)', 'b', 'pre')
             prerelease_compare = cmp(prereleases.index(self.prerelease[0]),
